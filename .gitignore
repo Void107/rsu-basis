@@ -1,6 +1,8 @@
 # Installed dependencies and generated output
 node_modules/
 dist/
+/distribution/*
+!/distribution/RSU工具-免安装体验包.zip
 coverage/
 *.tsbuildinfo
 *.log
