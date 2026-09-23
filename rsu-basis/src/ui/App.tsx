@@ -3,7 +3,7 @@
 //
 // R8：本文件及其依赖不发起任何网络请求；不写 IndexedDB / localStorage / sessionStorage。
 // R9：自检报告只在本机生成与展示，由用户手动复制或下载，应用自身不发送。
-import { useCallback, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { decodeLedger, runLedger, type EngineOutput, type Ledger } from '../engine/index.js';
 import { parsePdf, type ParseResult } from '../extraction/pdf/index.js';
 import { fidelityAdapter } from '../extraction/brokers/fidelity.js';
@@ -13,15 +13,13 @@ import { generateXlsx } from '../output/xlsx/index.js';
 import {
   buildSelfCheckReport, renderReportText, assertReportClean, type SelfCheckReport,
 } from '../report/selfCheckReport.js';
+import { copy, type Language, type CopyKey } from './i18n.js';
 import { DEMO_LEDGER } from './demoLedger.js';
 
 declare const __APP_VERSION__: string;
 const APP_VERSION = typeof __APP_VERSION__ === 'string' ? __APP_VERSION__ : '0.0.0-dev';
 
-const DISCLAIMER =
-  '本工具生成的是工作底稿，不是税务申报表，不构成税务建议。请在提交申报前与持照税务专业人士复核。';
-
-type Blocked = { title: string; message: string; failurePath?: string | undefined };
+type Blocked = { title: CopyKey; message: CopyKey; detail?: string; failurePath?: string | undefined };
 
 const S = {
   page: { maxWidth: 900, margin: '0 auto', padding: 24, fontFamily: 'system-ui, -apple-system, sans-serif', lineHeight: 1.6, color: '#1a1a1a' } as const,
@@ -34,16 +32,23 @@ const S = {
 };
 
 export default function App() {
+  const [language, setLanguage] = useState<Language>('en');
+  const t = copy[language];
+  const [copyStatus, setCopyStatus] = useState<'copyOk' | 'copyFailed' | null>(null);
+  useEffect(() => {
+    document.documentElement.lang = language === 'en' ? 'en' : 'zh-CN';
+    document.title = copy[language].title;
+  }, [language]);
   const [engine, setEngine] = useState<EngineOutput | null>(null);
   const [ledger, setLedger] = useState<Ledger | null>(null);
   const [blocked, setBlocked] = useState<Blocked | null>(null);
   const [parse, setParse] = useState<ParseResult | null>(null);
   const [report, setReport] = useState<SelfCheckReport | null>(null);
-  const [xlsxNote, setXlsxNote] = useState<string | null>(null);
+  const [xlsxNote, setXlsxNote] = useState<{ fileName: string; cells: number; roundTrip: boolean } | null>(null);
   const [busy, setBusy] = useState(false);
   const fileInput = useRef<HTMLInputElement>(null);
 
-  const reset = () => { setEngine(null); setLedger(null); setBlocked(null); setParse(null); setReport(null); setXlsxNote(null); };
+  const reset = () => { setEngine(null); setLedger(null); setBlocked(null); setParse(null); setReport(null); setXlsxNote(null); setCopyStatus(null); };
 
   const makeReport = useCallback((args: {
     l: Ledger | null; e: EngineOutput | null; p: ParseResult | null;
@@ -81,9 +86,7 @@ export default function App() {
 
       if (p.scan.isScanned) {
         setBlocked({
-          title: '这是扫描版文件，我们不支持',
-          message:
-            '这份 PDF 没有文字层（是扫描图片）。请到券商网站的 tax documents 区域重新下载原生 PDF。我们不做 OCR——识别错一位数字的代价太高。',
+          title: 'scanTitle', message: 'scanMessage',
           failurePath: 'F2',
         });
         makeReport({ l: null, e: null, p, broker: null, confidence: null, startPage: null, checks: [], ms: Date.now() - t0, headers: [] });
@@ -94,7 +97,7 @@ export default function App() {
       const range = fidelityAdapter.locateSupplemental(p.pages);
       // C1 能力门：hasPrintedTotalSupplemental='unknown' → 必然阻断（INDEX.md D16）
       const c1 = runC1({ hasPrintedTotal: fidelityAdapter.hasPrintedTotalSupplemental, perRowOrdinaryIncome: [], printedTotal: null });
-      setBlocked({ title: '该券商版式尚未通过验证', message: c1.userMessage ?? '未通过校验。', failurePath: c1.failurePath });
+      setBlocked({ title: 'brokerTitle', message: 'brokerMessage', failurePath: c1.failurePath });
       makeReport({
         l: null, e: null, p,
         broker: confidence > 0 ? fidelityAdapter.id : null,
@@ -104,7 +107,7 @@ export default function App() {
         headers: Object.keys(fidelityAdapter.columnMap),
       });
     } catch (err) {
-      setBlocked({ title: '无法读取这份文件', message: `解析未能完成：${(err as Error).name}。请确认这是一份未加密的 PDF。` });
+      setBlocked({ title: 'readTitle', message: 'readMessage', detail: (err as Error).name });
     } finally {
       setBusy(false);
     }
@@ -117,9 +120,9 @@ export default function App() {
     const t0 = Date.now();
     try {
       const d = decodeLedger(DEMO_LEDGER);
-      if (!d.ok) { setBlocked({ title: '内置案例解码失败', message: d.error.message }); return; }
+      if (!d.ok) { setBlocked({ title: 'decodeTitle', message: 'decodeMessage' }); return; }
       const e = runLedger(d.value);
-      if (!e.ok) { setBlocked({ title: '内置案例计算被阻断', message: `${e.error.kind}` }); return; }
+      if (!e.ok) { setBlocked({ title: 'engineTitle', message: 'engineMessage', detail: e.error.kind }); return; }
       setLedger(d.value);
       setEngine(e.value);
       const c5 = checkC5(e.value.reconcile.totalOrdinaryIncome, d.value.w2Anchor.rsuIncomeReported, d.value.vestLots.length);
@@ -142,72 +145,56 @@ export default function App() {
       });
       // §7 自检已在 generateXlsx 内部执行，不通过会抛错、不交付
       downloadBlob(new Blob([out.buffer as unknown as BlobPart], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }), out.fileName);
-      setXlsxNote(`已生成 ${out.fileName}｜生成后自检：${out.selfCheck.cellsChecked} 个公式格零容差比对通过，_ledger round-trip ${out.selfCheck.ledgerRoundTrip}`);
+      setXlsxNote({ fileName: out.fileName, cells: out.selfCheck.cellsChecked, roundTrip: out.selfCheck.ledgerRoundTrip === 'ok' });
     } catch (err) {
       setXlsxNote(null);
-      setBlocked({ title: '未交付：生成后自检未通过', message: `内部一致性校验未通过，我们不会输出可能有误的表。（${(err as Error).name}）` });
+      setBlocked({ title: 'exportTitle', message: 'exportMessage', detail: (err as Error).name });
     } finally {
       setBusy(false);
     }
   }, [ledger, engine]);
 
-  const reportText = useMemo(() => (report ? renderReportText(report) : ''), [report]);
+  const reportText = useMemo(() => (report ? renderReportText({ ...report, notice: t.reportNotice }) : ''), [report, t.reportNotice]);
 
   return (
     <main style={S.page}>
-      <h1 style={{ fontSize: 22, marginBottom: 4 }}>RSU 成本基础工作底稿生成器</h1>
-      <p style={S.muted}>版本 {APP_VERSION}｜独立预览版</p>
-      <div style={S.disclaimer}>{DISCLAIMER}</div>
+      <nav aria-label="Language / 语言" style={{ display: 'flex', justifyContent: 'flex-end', gap: 8 }}>
+        <button style={{ ...S.btn, fontWeight: language === 'en' ? 700 : 400, background: language === 'en' ? '#e8f0fe' : '#fff' }} lang="en" aria-pressed={language === 'en'} onClick={() => setLanguage('en')}>English</button>
+        <button style={{ ...S.btn, fontWeight: language === 'zh' ? 700 : 400, background: language === 'zh' ? '#e8f0fe' : '#fff' }} lang="zh-CN" aria-pressed={language === 'zh'} onClick={() => setLanguage('zh')}>中文</button>
+      </nav>
+      <h1 style={{ fontSize: 22, marginBottom: 4 }}>{t.title}</h1>
+      <p style={S.muted}>{t.version} {APP_VERSION} | {t.preview}</p>
+      <div style={S.disclaimer}>{t.disclaimer}</div>
+      <div style={S.card}><strong>{t.accessTitle}</strong><p style={S.muted}>{t.access}</p></div>
+      <div style={S.card}><strong>{t.privacyTitle}</strong><p style={S.muted}>{t.privacy}</p></div>
       <div style={S.card}>
-        <strong>无需组织账号，直接在本机使用</strong>
-        <p style={S.muted}>
-          不需要企业邮箱、邀请或特定 Agent、表格编辑器。任何获得此页面的用户都可以运行内置假数据示例。
-          当前计算范围限定为美国税务居民的单税年、单券商 RSU 成本基础底稿；不支持其他地区税制、
-          ESPP、期权、多州分摊或 wash sale。真实券商文档流程尚未完成验证，本版本不能用于完成真实报税任务。
-        </p>
-      </div>
-
-      <div style={S.card}>
-        <strong>你的文档不出这台设备</strong>
-        <p style={S.muted}>
-          这个页面里没有任何网络请求通路：CSP 已设 <code>connect-src 'none'</code>，由浏览器强制执行。
-          我们也不写任何浏览器存储（IndexedDB / localStorage / sessionStorage）——刷新页面就要重新上传，
-          因为我们不在任何地方保存你的文档，包括你自己的浏览器里。可以断网后再操作，功能完全一样。
-        </p>
-      </div>
-
-      <div style={S.card}>
-        <h2 style={{ fontSize: 17 }}>1. 放入券商 PDF</h2>
-        <input ref={fileInput} type="file" accept="application/pdf" style={{ display: 'none' }}
+        <h2 style={{ fontSize: 17 }}>{t.pdfTitle}</h2>
+        <input aria-label={t.choosePdf} ref={fileInput} type="file" accept="application/pdf" style={{ display: 'none' }}
           onChange={(ev) => { const f = ev.target.files?.[0]; if (f) void onFile(f); }} />
-        <button style={S.btn} disabled={busy} onClick={() => fileInput.current?.click()}>选择 PDF…</button>
-        <p style={S.muted}>
-          解析全程在本机完成。当前没有任何券商版式通过验证（C1 合计锚点待回填），
-          因此真实文档会在校验处被明确阻断，而不是给你一个不可信的结果。
-        </p>
+        <button style={S.btn} disabled={busy} onClick={() => fileInput.current?.click()}>{t.choosePdf}</button>
+        <p style={S.muted}>{t.pdfNote}</p>
         {parse && (
           <p style={S.muted}>
-            已读取：{parse.pageCount} 页｜含文字层的页：{parse.scan.textPageCount}｜
-            扫描版判定：{parse.scan.isScanned ? '是' : '否'}
+            {t.pages}: {parse.pageCount} | {t.textPages}: {parse.scan.textPageCount} | {t.scanned}: {parse.scan.isScanned ? t.yes : t.no}
           </p>
         )}
       </div>
 
       <div style={S.card}>
-        <h2 style={{ fontSize: 17 }}>2. 或用内置合成案例走一遍全流程</h2>
-        <button style={S.btn} disabled={busy} onClick={onDemo}>运行内置合成案例</button>
-        <p style={S.muted}>全部为构造的假数据，不含任何真人信息。用于在断网状态下验证端到端可跑通。</p>
+        <h2 style={{ fontSize: 17 }}>{t.demoTitle}</h2>
+        <button style={S.btn} disabled={busy} onClick={onDemo}>{t.demo}</button>
+        <p style={S.muted}>{t.demoNote}</p>
         {engine && ledger && (
           <div>
             <table style={{ borderCollapse: 'collapse', marginTop: 8, fontSize: 14 }}>
               <tbody>
                 {([
-                  ['归属批次 / 卖出笔数', `${ledger.vestLots.length} / ${ledger.saleEvents.length}`],
-                  ['8949 行数（逐笔列示）', String(engine.form8949.rows.length)],
-                  ['调整总额', engine.reconcile.totalAdjustment.toFixed(2)],
-                  ['调整后成本基础合计', engine.reconcile.totalAdjustedBasis.toFixed(2)],
-                  ['修正后资本利得', engine.reconcile.totalCorrectGainLoss.toFixed(2)],
-                  ['照抄 1099-B 会多报的利得', engine.reconcile.phantomGain.toFixed(2)],
+                  [t.lots, `${ledger.vestLots.length} / ${ledger.saleEvents.length}`],
+                  [t.rows, String(engine.form8949.rows.length)],
+                  [t.adjustment, engine.reconcile.totalAdjustment.toFixed(2)],
+                  [t.basis, engine.reconcile.totalAdjustedBasis.toFixed(2)],
+                  [t.gain, engine.reconcile.totalCorrectGainLoss.toFixed(2)],
+                  [t.phantom, engine.reconcile.phantomGain.toFixed(2)],
                 ] as const).map(([k, v]) => (
                   <tr key={k}>
                     <td style={{ padding: '2px 12px 2px 0', color: '#555' }}>{k}</td>
@@ -216,30 +203,32 @@ export default function App() {
                 ))}
               </tbody>
             </table>
-            <button style={S.btn} disabled={busy} onClick={() => void onDownloadXlsx()}>生成并下载 .xlsx 底稿</button>
-            {xlsxNote && <p style={S.muted}>{xlsxNote}</p>}
+            <button style={S.btn} disabled={busy} onClick={() => void onDownloadXlsx()}>{t.download}</button>
+            <p style={S.muted}>{t.workbookNote}</p>
+            {xlsxNote && <p role="status" style={S.muted}>{t.generated} {xlsxNote.fileName} | {t.formulaCheck}: {xlsxNote.cells} | {t.roundTrip}: {xlsxNote.roundTrip ? t.yes : t.no}</p>}
           </div>
         )}
       </div>
 
       {blocked && (
         <div style={S.block}>
-          <strong>{blocked.title}</strong>
-          <p style={{ margin: '6px 0 0' }}>{blocked.message}</p>
-          {blocked.failurePath && <p style={S.muted}>参考编号：{blocked.failurePath}</p>}
+          <strong>{t[blocked.title]}</strong>
+          <p style={{ margin: '6px 0 0' }}>{t[blocked.message]} {blocked.detail}</p>
+          {blocked.failurePath && <p style={S.muted}>{t.reference}: {blocked.failurePath}</p>}
         </div>
       )}
 
       {report && (
         <div style={S.card}>
-          <h2 style={{ fontSize: 17 }}>3. 自检报告（先看全文，再决定发不发）</h2>
+          <h2 style={{ fontSize: 17 }}>{t.reportTitle}</h2>
           <p style={S.muted}>
-            {report.notice} 应用<strong>不会自动发送</strong>任何内容——下面是全文，你确认后可自行复制或下载。
+            {t.reportNote}
           </p>
+          {copyStatus && <p role="status">{t[copyStatus]}</p>}
           <pre style={S.pre}>{reportText}</pre>
-          <button style={S.btn} onClick={() => void navigator.clipboard?.writeText(reportText)}>复制全文</button>
+          <button style={S.btn} onClick={() => { void (async () => { try { await navigator.clipboard.writeText(reportText); setCopyStatus('copyOk'); } catch { setCopyStatus('copyFailed'); } })(); }}>{t.copy}</button>
           <button style={S.btn} onClick={() => downloadBlob(new Blob([reportText], { type: 'application/json' }), 'self-check-report.json')}>
-            下载为 JSON
+            {t.json}
           </button>
         </div>
       )}

@@ -1,33 +1,40 @@
 # RSU Cost Basis Reconciler
 
-本地运行的 RSU 成本基础核对与工作底稿原型。采用 TypeScript、React、Decimal.js、PDF.js 和 ExcelJS；确定性引擎负责计算，输出可复核的 XLSX 底稿。
+**English** | [简体中文](README.zh-CN.md)
 
-当前真实券商文档流程尚未完成验证，内置合成案例可用于演示。产品不执行税务申报；现有测试通过不代表所有业务边界已验证。
+A local RSU cost-basis reconciliation and workpaper prototype. A deterministic calculation engine produces reviewable XLSX workpapers using TypeScript, React, Decimal.js, PDF.js and ExcelJS.
 
-## 普通用户从这里开始
+**The built-in fictional demo works; the real broker-document workflow is unfinished.** This product does not file tax returns. Passing tests does not establish correctness for all business cases.
 
-请阅读 **[安装与使用指南](安装与使用指南.md)**：含 Mac / Windows 打开步骤、按钮操作、导出文件查看和常见问题，不需要编程基础。
+## Start here — no coding required
 
-下载 [RSU工具-免安装体验包.zip](distribution/RSU工具-免安装体验包.zip)（打开文件页后点击下载原始文件），或向维护者索取该文件。解压后用浏览器打开 `RSU工具.html`，点击“运行内置合成案例”，再点击“生成并下载 .xlsx 底稿”。当前仅可完整体验假数据流程。
+Read the **[Installation and User Guide](INSTALL-AND-USE.md)** for Mac and Windows instructions, button-by-button steps, saved files and troubleshooting. A [Chinese guide](安装与使用指南.md) is also available.
 
-GitHub 的源码 ZIP 不是免安装体验包。本仓库目前为私有仓库，尚无公开下载站点；下面的安装和构建命令仅供维护者使用。
+Download the [ready-to-use preview ZIP](distribution/RSU工具-免安装体验包.zip): open the file page and click **Download raw file**. Extract it, open `RSU-Tool.html` in a browser, click **Run built-in demo**, then **Generate and download .xlsx workpaper**.
 
-## 使用资格与当前能力
+The page defaults to English. Use **English / 中文** at the top right to switch without losing current results. Reloading resets the language to English and clears the session. Workbook contents retain their original mixed Chinese/English labels; report keys and status codes remain in English.
 
-这是与任何雇主、组织、Agent 或表格编辑器无绑定的本地应用。无需登录、企业邮箱或邀请；任何获得构建文件的用户都可以运行合成案例、查看计算结果和导出演示底稿。
+GitHub's source-code ZIP is not the ready-to-use package. This repository is private, and there is no public download site. The commands below are for maintainers only.
 
-这不表示支持任意国家、任意资产或完整报税。当前领域范围仅为美国税务居民、单税年、单券商的 RSU 成本基础核对。真实 PDF 到最终底稿尚未打通，扫描件、ESPP、期权、多州分摊、wash sale 等不受支持。不要通过关闭校验扩大支持范围。
+## Access and current scope
 
-应用不要求安装 Excel。导出的 XLSX 可交给兼容编辑器查看；不同软件中的公式与版式仍需独立验证。当前没有实现任何 Agent 专属接口。
+No employer, organization, agent or spreadsheet product is required. Anyone with the packaged file can run the fictional demo without an account, invitation or corporate email.
 
-## 目录
+The intended scope is RSU cost-basis workpapers for US tax residents, one tax year and one broker. The real-PDF-to-workpaper workflow is incomplete. Scanned documents, other tax jurisdictions, ESPP, options, multi-state allocation and wash sales are unsupported. Do not bypass validation to broaden scope.
 
-- `rsu-basis/`：应用源码、测试、锁定的依赖版本及构建配置。
-- `files/`：产品规格、设计决策与合成示例。部分历史文档状态可能滞后于代码。
+Excel is not required to run the app. Compatible spreadsheet editors can open exported XLSX files, but their formula behavior and formatting require independent validation. There is no agent-specific integration.
 
-## 维护者：安装与验证
+## Repository layout
 
-需要 Node.js（本地已在 Node 24 验证）、npm 和 Python 3。
+- `rsu-basis/`: application code, tests, locked dependencies and build configuration.
+- `files/`: product specifications, design decisions and synthetic examples, primarily in Chinese. Historical design documents may lag behind the implementation.
+- `INSTALL-AND-USE.md` / `安装与使用指南.md`: beginner user guides.
+- `scripts/package_preview.py`: builds the distribution package from an existing application build.
+- `distribution/`: ready-to-use preview ZIP.
+
+## Maintainers: install and verify
+
+Requires Node.js (locally checked with Node 24), npm and Python 3.
 
 ```sh
 cd rsu-basis
@@ -35,21 +42,27 @@ npm ci
 npm run ci
 ```
 
-完整检查包括 TypeScript、Vite 构建、Vitest 和独立 Python 样例验算。
+Checks include TypeScript, the Vite build, Vitest tests and independent Python synthetic-case calculations.
 
-## 维护者：构建与打包
+## Maintainers: build and package
 
 ```sh
 cd rsu-basis
 npm run build
 ```
 
-产物为 `rsu-basis/dist/index.html`，可用浏览器打开。真实 PDF 路径仍需完成浏览器 worker 与券商版式验证。
+The output is `rsu-basis/dist/index.html`, a self-contained local browser file. The real PDF path still needs browser-worker and broker-format validation.
 
-构建完成后，回到项目根目录运行 `python3 scripts/package_preview.py`，即可在 `distribution/` 中得到包含应用、入门说明和文件校验值的免安装体验包。仅该 ZIP 提交 Git，解压文件和其他临时产物不提交；源码更新后应重新构建并打包。
+From the repository root:
 
-## 数据与版本管理
+```sh
+python3 scripts/package_preview.py
+```
 
-仅提交源码、规格、合成测试数据和已注明来源的公开样本 PDF。不要提交真实 W-2、1099-B、账户资料、密钥或个人报税底稿；其他形式的敏感文件也须在提交前检查。
+The package includes the application, both languages of instructions and file checksums. Only the distribution ZIP is committed; extracted files and temporary outputs are excluded. Rebuild and repackage after source changes.
 
-依赖目录、构建产物、本机设置和本地评审资料已从 Git 排除。将源码推送至 Git 托管平台不会自动发布网站或部署在线服务。
+## Data and version control
+
+Only source code, specifications, synthetic data and attributed public samples belong in Git, along with the explicitly included preview package. Do not commit real tax forms, account records, credentials or personal workpapers. Review other file types for sensitive data before committing.
+
+Dependencies, intermediate builds, local settings and local review notes are excluded. Pushing code to GitHub does not deploy a public website.
