@@ -1,0 +1,14 @@
+{
+  "rows": [
+    { "description": "40 sh ACME", "dateAcquired": "2024-02-15", "dateSold": "2024-02-15", "proceeds": "2000.00", "costBasisReported": "0.00", "adjustmentCode": "B", "adjustmentAmount": "-2000.00", "gainLoss": "0.00", "term": "ST", "box": "A" },
+    { "description": "40 sh ACME", "dateAcquired": "2024-05-15", "dateSold": "2024-05-15", "proceeds": "2480.00", "costBasisReported": "0.00", "adjustmentCode": "B", "adjustmentAmount": "-2480.00", "gainLoss": "0.00", "term": "ST", "box": "A" },
+    { "description": "24 sh ACME", "dateAcquired": "2024-05-15", "dateSold": "2024-05-15", "proceeds": "1488.00", "costBasisReported": "0.00", "adjustmentCode": "B", "adjustmentAmount": "-1488.00", "gainLoss": "0.00", "term": "ST", "box": "A" },
+    { "description": "40 sh ACME", "dateAcquired": "2024-08-15", "dateSold": "2024-08-15", "proceeds": "2192.00", "costBasisReported": "0.00", "adjustmentCode": "B", "adjustmentAmount": "-2200.00", "gainLoss": "-8.00", "term": "ST", "box": "A" },
+    { "description": "40 sh ACME", "dateAcquired": "2024-11-15", "dateSold": "2024-11-15", "proceeds": "2800.00", "costBasisReported": "0.00", "adjustmentCode": "B", "adjustmentAmount": "-2800.00", "gainLoss": "0.00", "term": "ST", "box": "A" },
+    { "description": "60 sh ACME", "dateAcquired": "2024-02-15", "dateSold": "2024-12-10", "proceeds": "4500.00", "costBasisReported": "0.00", "adjustmentCode": "B", "adjustmentAmount": "-3000.00", "gainLoss": "1500.00", "term": "ST", "box": "A" },
+    { "description": "60 sh ACME", "dateAcquired": "2024-05-15", "dateSold": "2024-12-10", "proceeds": "4500.00", "costBasisReported": "0.00", "adjustmentCode": "B", "adjustmentAmount": "-3720.00", "gainLoss": "780.00", "term": "ST", "box": "A" },
+    { "description": "36 sh ACME", "dateAcquired": "2024-05-15", "dateSold": "2024-12-10", "proceeds": "2700.00", "costBasisReported": "0.00", "adjustmentCode": "B", "adjustmentAmount": "-2232.00", "gainLoss": "468.00", "term": "ST", "box": "A" },
+    { "description": "44 sh ACME", "dateAcquired": "2024-08-15", "dateSold": "2024-12-10", "proceeds": "3300.00", "costBasisReported": "0.00", "adjustmentCode": "B", "adjustmentAmount": "-2420.00", "gainLoss": "880.00", "term": "ST", "box": "A" }
+  ],
+  "totals": { "proceeds": "25960.00", "costBasisReported": "0.00", "adjustmentAmount": "-22340.00", "gainLoss": "3620.00" }
+}

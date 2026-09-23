@@ -1,0 +1,36 @@
+# Installed dependencies and generated output
+node_modules/
+dist/
+coverage/
+*.tsbuildinfo
+*.log
+
+# Local machine and agent settings
+.DS_Store
+.claude/
+.codex/
+.idea/
+.vscode/
+
+# Credentials and local configuration
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Local review notes include internal product context and machine paths
+/review-*/
+
+# Duplicate exported workspace
+/files/mnt/
+
+# Keep personal tax documents out of version control.
+# Only the public, referenced test fixture is tracked.
+*.pdf
+!rsu-basis/test/fixtures/fidelity-sps-taxguide.pdf
+*.xlsx
+*.xls
+*.csv
+/private-data/
+/uploads/

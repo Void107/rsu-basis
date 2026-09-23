@@ -1,0 +1,106 @@
+{
+  "matches": [
+    {
+      "saleId": "S1",
+      "lotId": "A",
+      "sharesMatched": "40",
+      "proceedsPortion": "2000.00",
+      "adjustedBasis": "2000.00",
+      "reportedBasisPortion": "0.00",
+      "term": "ST",
+      "matchMethod": "sell_to_cover_pairing"
+    },
+    {
+      "saleId": "S2",
+      "lotId": "B",
+      "sharesMatched": "40",
+      "proceedsPortion": "2480.00",
+      "adjustedBasis": "2480.00",
+      "reportedBasisPortion": "0.00",
+      "term": "ST",
+      "matchMethod": "sell_to_cover_pairing"
+    },
+    {
+      "saleId": "S3",
+      "lotId": "C",
+      "sharesMatched": "24",
+      "proceedsPortion": "1488.00",
+      "adjustedBasis": "1488.00",
+      "reportedBasisPortion": "0.00",
+      "term": "ST",
+      "matchMethod": "sell_to_cover_pairing"
+    },
+    {
+      "saleId": "S4",
+      "lotId": "D",
+      "sharesMatched": "40",
+      "proceedsPortion": "2192.00",
+      "adjustedBasis": "2200.00",
+      "reportedBasisPortion": "0.00",
+      "term": "ST",
+      "matchMethod": "sell_to_cover_pairing"
+    },
+    {
+      "saleId": "S5",
+      "lotId": "E",
+      "sharesMatched": "40",
+      "proceedsPortion": "2800.00",
+      "adjustedBasis": "2800.00",
+      "reportedBasisPortion": "0.00",
+      "term": "ST",
+      "matchMethod": "sell_to_cover_pairing"
+    },
+    {
+      "saleId": "S6",
+      "lotId": "A",
+      "sharesMatched": "60",
+      "proceedsPortion": "4500.00",
+      "adjustedBasis": "3000.00",
+      "reportedBasisPortion": "0.00",
+      "term": "ST",
+      "matchMethod": "fifo"
+    },
+    {
+      "saleId": "S6",
+      "lotId": "B",
+      "sharesMatched": "60",
+      "proceedsPortion": "4500.00",
+      "adjustedBasis": "3720.00",
+      "reportedBasisPortion": "0.00",
+      "term": "ST",
+      "matchMethod": "fifo"
+    },
+    {
+      "saleId": "S6",
+      "lotId": "C",
+      "sharesMatched": "36",
+      "proceedsPortion": "2700.00",
+      "adjustedBasis": "2232.00",
+      "reportedBasisPortion": "0.00",
+      "term": "ST",
+      "matchMethod": "fifo"
+    },
+    {
+      "saleId": "S6",
+      "lotId": "D",
+      "sharesMatched": "44",
+      "proceedsPortion": "3300.00",
+      "adjustedBasis": "2420.00",
+      "reportedBasisPortion": "0.00",
+      "term": "ST",
+      "matchMethod": "fifo"
+    }
+  ],
+  "reconcile": {
+    "status": "ok",
+    "totalOrdinaryIncome": "27420.00",
+    "totalProceeds": "25960.00",
+    "totalAdjustedBasis": "22340.00",
+    "totalAdjustment": "-22340.00",
+    "totalCorrectGainLoss": "3620.00",
+    "gainLossIfUnadjusted": "25960.00",
+    "phantomGain": "22340.00",
+    "sharesUnmatchedThisYear": "76",
+    "basisOfUnmatchedShares": "5080.00"
+  }
+}

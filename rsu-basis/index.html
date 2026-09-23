@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!--
+      CLAUDE.md R8：文档处理路由零出网。connect-src 'none' 由【浏览器强制执行】——
+      任何 fetch / XMLHttpRequest / WebSocket / sendBeacon 都会被拦掉，这是可当场验证的事实，
+      不是一句承诺。default-src 'self' 配合单文件内联，不加载任何第三方脚本/字体/样式/图片。
+      注意：单文件构建把 JS/CSS 内联进 HTML，因此必须允许 'unsafe-inline'。
+    -->
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'"
+    />
+    <title>RSU Cost Basis Reconciler（工作底稿生成器）</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/ui/main.tsx"></script>
+  </body>
+</html>

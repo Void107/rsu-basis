@@ -1,0 +1,7 @@
+{
+  "rows": [
+    { "description": "30 sh ACME", "dateAcquired": "2023-03-15", "dateSold": "2024-03-15", "proceeds": "1800.00", "costBasisReported": "0.00", "adjustmentCode": "B", "adjustmentAmount": "-1200.00", "gainLoss": "600.00", "term": "ST", "box": "A" },
+    { "description": "30 sh ACME", "dateAcquired": "2023-03-15", "dateSold": "2024-03-16", "proceeds": "1800.00", "costBasisReported": "0.00", "adjustmentCode": "B", "adjustmentAmount": "-1200.00", "gainLoss": "600.00", "term": "LT", "box": "D" }
+  ],
+  "totals": { "proceeds": "3600.00", "costBasisReported": "0.00", "adjustmentAmount": "-2400.00", "gainLoss": "1200.00" }
+}

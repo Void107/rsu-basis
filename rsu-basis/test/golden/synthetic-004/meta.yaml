@@ -1,0 +1,28 @@
+case_id: synthetic-004-nonzero-reported-basis
+broker: synthetic
+tax_year: 2024
+answer_source: synthetic
+verified_by: "构造生成；docs/02 §2.4 加法式定义；verify.py 独立验算"
+covers:
+  - basis_reported_to_irs_box_a_or_d
+  - nonzero_reported_basis_on_1099b
+  - additive_basis_definition
+  - holding_period_st_and_lt
+  - w2_anchor_reconciliation
+notes: |
+  唯一新增覆盖：1099-B 报了【非零】基础 → 验证 docs/02 §2.4 的加法式定义
+    adjustedBasis = ordinaryIncomePortion + reportedBasisPortion
+  之前所有 case 的 reportedBasis 都是 0，加法式与乘法式（matched × vestFmv）无法区分。
+  这里 reported ≠ 0，两式给出不同答案，只有加法式正确。
+
+  Lot Y：vest 2024-01-15，100 股，FMV 20.00，Σoi 2000.00，无代扣（全部到账）。
+  V1（40 股，ST）：券商报了 reportedBasis 200.00 → adjustedBasis = 40×20 + 200 = 1000.00
+                  （乘法式会给 800.00，错）；adjustmentAmount = -(1000-200) = -800.00
+  V2（30 股，LT）：reportedBasis 300.00 → adjustedBasis = 30×20 + 300 = 900.00
+                  adjustmentAmount = -(900-300) = -600.00
+
+  ⚠️ I6 恒等式在 reported ≠ 0 时用【普通所得部分】而非 adjustedBasis：
+     Σ(adjustedBasis − reportedBasisPortion) + Σ未匹配basis = Σ ordinaryIncome
+     (800 + 600) + (30×20 = 600) = 2000.00 = Σ ordinaryIncome
+  若误用 Σ adjustedBasis（= 1900）+ 600 = 2500 ≠ 2000，会假阳性报 I6 违反——
+  这正是本 case 要暴露、并驱动 verify.py 与引擎 I6 泛化的点。

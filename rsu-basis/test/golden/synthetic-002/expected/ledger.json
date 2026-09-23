@@ -1,0 +1,65 @@
+{
+  "schemaVersion": 1,
+  "taxYear": 2024,
+  "ticker": "ACME",
+  "vestLots": [
+    {
+      "id": "X",
+      "grantId": "G0",
+      "vestDate": "2023-03-15",
+      "sharesVested": "100",
+      "sharesWithheld": "40",
+      "sharesDelivered": "60",
+      "vestFmv": "40.00",
+      "ordinaryIncome": "4000.00",
+      "fmvConvention": "close",
+      "sources": [
+        {
+          "fileHash": "synthetic",
+          "fileName": "synthetic",
+          "page": 1,
+          "rowIndex": 1,
+          "columnLabel": null,
+          "method": "manual",
+          "confidence": 1.0,
+          "rawText": "synthetic"
+        }
+      ]
+    }
+  ],
+  "saleEvents": [
+    {
+      "id": "T1",
+      "saleDate": "2024-03-15",
+      "sharesSold": "30",
+      "proceeds": "1800.00",
+      "proceedsBasis": "gross",
+      "reportedBasis": "0.00",
+      "reportedTerm": "ST",
+      "covered": true,
+      "saleKind": "open_market",
+      "sources": [],
+      "basisReportedToIRS": true
+    },
+    {
+      "id": "T2",
+      "saleDate": "2024-03-16",
+      "sharesSold": "30",
+      "proceeds": "1800.00",
+      "proceedsBasis": "gross",
+      "reportedBasis": "0.00",
+      "reportedTerm": "LT",
+      "covered": true,
+      "saleKind": "open_market",
+      "sources": [],
+      "basisReportedToIRS": true
+    }
+  ],
+  "w2Anchor": {
+    "taxYear": 2024,
+    "box1Total": null,
+    "rsuIncomeReported": null,
+    "rsuIncomeSource": null,
+    "sources": []
+  }
+}

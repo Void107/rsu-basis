@@ -1,0 +1,36 @@
+{
+  "matches": [
+    {
+      "saleId": "V1",
+      "lotId": "Y",
+      "sharesMatched": "40",
+      "proceedsPortion": "1400.00",
+      "adjustedBasis": "1000.00",
+      "reportedBasisPortion": "200.00",
+      "term": "ST",
+      "matchMethod": "fifo"
+    },
+    {
+      "saleId": "V2",
+      "lotId": "Y",
+      "sharesMatched": "30",
+      "proceedsPortion": "1500.00",
+      "adjustedBasis": "900.00",
+      "reportedBasisPortion": "300.00",
+      "term": "LT",
+      "matchMethod": "fifo"
+    }
+  ],
+  "reconcile": {
+    "status": "ok",
+    "totalOrdinaryIncome": "2000.00",
+    "totalProceeds": "2900.00",
+    "totalAdjustedBasis": "1900.00",
+    "totalAdjustment": "-1400.00",
+    "totalCorrectGainLoss": "1000.00",
+    "gainLossIfUnadjusted": "2400.00",
+    "phantomGain": "1400.00",
+    "sharesUnmatchedThisYear": "30",
+    "basisOfUnmatchedShares": "600.00"
+  }
+}

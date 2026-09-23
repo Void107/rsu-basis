@@ -1,0 +1,24 @@
+case_id: synthetic-002-holding-period-boundary
+broker: synthetic
+tax_year: 2024
+answer_source: synthetic
+verified_by: "构造生成；docs/10 §6"
+covers:
+  - basis_reported_to_irs_box_a_or_d
+  - holding_period_exactly_one_year
+  - holding_period_one_year_plus_one_day
+  - prior_year_vest_lot
+notes: |
+  唯一目的：锁住「超过一年」而非「满一年」。
+  T1 卖出日 2024-03-15 恰好是 vest 日加一年 → 短期。
+  T2 卖出日 2024-03-16 → 长期。
+  实现必须用 saleDate > vestDate + 1y，不能用 >=。
+  lot 在 2023 年 vest，2024 年卖出，因此 2024 年的 W-2 无 RSU 收入，
+  rsuIncomeReported 为 null，C5 校验降级为 WARN（docs/05 F13）。
+
+  重要：Lot X 的 40 股代扣卖出发生在 2023 年，不在本年 1099-B 上。
+  因此 sharesUnmatchedThisYear = 40 并不代表「仍持有」——它们已在往年处置。
+  跨年 lot 场景下，I6 的精确等式
+    Σ已卖basis + Σ未匹配basis = Σ ordinaryIncome
+  仍然成立（2400 + 1600 = 4000），但「未匹配」的语义是
+  「不在本年 ledger 中匹配」，不是「仍持有」。

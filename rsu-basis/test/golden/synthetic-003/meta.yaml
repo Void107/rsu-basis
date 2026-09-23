@@ -1,0 +1,21 @@
+case_id: synthetic-003-basis-not-reported
+broker: synthetic
+tax_year: 2024
+answer_source: synthetic
+verified_by: "构造生成；docs/01 §6.1 第二形态；verify.py 独立验算"
+covers:
+  - basis_not_reported_to_irs_box_b_or_e
+  - correct_basis_directly_in_column_e_no_code
+  - holding_period_st_and_lt
+  - prior_year_vest_lot
+notes: |
+  唯一新增覆盖：1099-B 基础【未】报送 IRS（Box 12 未勾选）→ docs/01 §6.1 第二形态。
+  Box B（短期）/ E（长期），正确基础直接进 (e) 列，无代码 B、无 (g) 调整额。
+  这是与 synthetic-001/002（Box A/D + 代码 B）完全不同的一条输出路径。
+
+  Lot X 于 2023 年 vest，代扣 40 股卖出发生在往年、不在本年 1099-B 上，
+  因此 rsuIncomeReported 为 null，C5 降级 WARN（同 synthetic-002）。
+  U1（2024-06-14）短期、U2（2024-06-16）长期，锁 Box B 与 Box E 两条子路径。
+
+  精确性验算（docs/10 §5 I6，reported 全为 0）：
+    已卖 basis 1500.00 + 未匹配 basis 1500.00 = 3000.00 = Σ ordinaryIncome

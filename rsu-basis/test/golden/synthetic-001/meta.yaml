@@ -1,0 +1,19 @@
+case_id: synthetic-001-acme-2024
+broker: synthetic
+tax_year: 2024
+answer_source: synthetic
+verified_by: "构造生成；docs/10 §5 全部不变量手工验算通过"
+covers:
+  - basis_reported_to_irs_box_a_or_d
+  - sell_to_cover_pairing
+  - same_day_multi_grant_vest
+  - cross_lot_open_market_sale
+  - stc_price_differs_from_vest_fmv
+  - partial_lot_consumption
+  - w2_anchor_reconciliation
+notes: |
+  合成案例，无源文档。sources[] 为占位。
+  B、C 两 lot 同日 vest，靠代扣股数（40 vs 24）唯一配对。
+  S4 成交价 54.80 ≠ vest FMV 55.00，产生 -8.00 短期亏损。
+  精确性验算（docs/10 §5 I6）：
+    已卖 basis 22340.00 + 持有 basis 5080.00 = 27420.00 = Σ ordinaryIncome

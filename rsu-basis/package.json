@@ -1,0 +1,36 @@
+{
+  "name": "rsu-basis",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "RSU Cost Basis Reconciler — P1 deterministic engine",
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:property": "vitest run test/property/invariants.test.ts",
+    "test:golden": "vitest run test/golden/run-golden.test.ts",
+    "test:verify": "python3 test/golden/verify.py",
+    "build": "vite build --config vite.config.build.ts",
+    "ci": "npm run typecheck && npm run build && vitest run && python3 test/golden/verify.py"
+  },
+  "dependencies": {
+    "decimal.js": "^10.4.3",
+    "exceljs": "^4.4.0",
+    "fflate": "^0.8.3",
+    "pdfjs-dist": "^4.10.38",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "@types/react": "^19.2.18",
+    "@types/react-dom": "^19.2.5",
+    "@vitejs/plugin-react": "^4.7.0",
+    "fast-check": "^3.23.1",
+    "jsdom": "^30.0.1",
+    "typescript": "^5.6.3",
+    "vite": "^5.4.21",
+    "vite-plugin-singlefile": "^2.3.3",
+    "vitest": "^2.1.8"
+  }
+}
