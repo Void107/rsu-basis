@@ -156,8 +156,16 @@ export default function App() {
   return (
     <main style={S.page}>
       <h1 style={{ fontSize: 22, marginBottom: 4 }}>RSU 成本基础工作底稿生成器</h1>
-      <p style={S.muted}>版本 {APP_VERSION}｜内部试用</p>
+      <p style={S.muted}>版本 {APP_VERSION}｜独立预览版</p>
       <div style={S.disclaimer}>{DISCLAIMER}</div>
+      <div style={S.card}>
+        <strong>无需组织账号，直接在本机使用</strong>
+        <p style={S.muted}>
+          不需要企业邮箱、邀请或特定 Agent、表格编辑器。任何获得此页面的用户都可以运行内置假数据示例。
+          当前计算范围限定为美国税务居民的单税年、单券商 RSU 成本基础底稿；不支持其他地区税制、
+          ESPP、期权、多州分摊或 wash sale。真实券商文档流程尚未完成验证，本版本不能用于完成真实报税任务。
+        </p>
+      </div>
 
       <div style={S.card}>
         <strong>你的文档不出这台设备</strong>

@@ -35,7 +35,7 @@ export interface Quirk {
  *   'confirmed' — 已在真实文档/结构描述表上确认有印刷合计行，可作 C1 锚点
  *   'absent'    — 已确认【没有】印刷合计行 → 无可信锚点 → 该券商不支持（不设变通）
  *   'unknown'   — 尚未验证（等待结构描述表回填）→ 运行时【硬阻断】，不静默跳过
- * 拿到同事回填后，把对应适配器的这个字段从 'unknown' 改一行即可。
+ * 拿到测试用户回填后，把对应适配器的这个字段从 'unknown' 改一行即可。
  */
 export type PrintedTotalStatus = 'confirmed' | 'absent' | 'unknown';
 

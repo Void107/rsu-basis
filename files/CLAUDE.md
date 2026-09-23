@@ -100,9 +100,9 @@ CI 中加一条依赖检查：`src/engine/` 对 `src/extraction/llm/` 的引用�
 
 CI 检查三项：文档路由的第三方资源数为 0；集成测试后 IndexedDB 与 localStorage 为空；CSP 头存在且 `connect-src` 为 `'none'`。
 
-例外只有一处：`docs/03` 的 L3（LLM 回退）走独立路由与独立 CSP，且必须先取得 `docs/07` §2.3 规定格式的书面同意。**拒绝 L3 不得影响主流程可用性。**
+当前不启用 L3（LLM 回退）。未来启用前须按 `07-obligations.md` §2.3 明确授权与数据边界，采用独立路由与策略。**拒绝云处理不得影响已支持的本地功能。**
 
-内部试用阶段这条还有第二个作用：**它让你在物理上无法接触同事的文档**。见 R9。
+预览测试阶段这条还有第二个作用：**它让你在物理上无法接触测试用户的文档**。见 R9。
 
 对外分支若恢复 L3，理由与约束见 `docs/07` §4。
 
@@ -139,7 +139,7 @@ src/
   output/
     xlsx/           exceljs 生成，见 docs/04
   ui/               React。不得包含任何计算逻辑。
-  state/            IndexedDB 持久化 + xlsx 内嵌 ledger 读写
+  state/            仅内存状态；持久交付由用户下载的文件承载
 test/
   golden/           golden set 夹具（脱敏后），见 docs/06
   property/         fast-check 不变量测试
